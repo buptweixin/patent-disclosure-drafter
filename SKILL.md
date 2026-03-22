@@ -5,9 +5,9 @@ description: generate a complete chinese patent disclosure from a rough inventio
 
 # Patent Disclosure Drafter
 
-Treat the task as structured disclosure drafting, not generic brainstorming. The goal is to turn a rough technical idea into a complete, formal Chinese patent disclosure that another patent professional can continue refining.
+Treat the task as structured disclosure drafting, not generic brainstorming. Turn a rough technical idea into a complete Chinese patent disclosure that another patent professional can directly refine.
 
-## Default behavior
+## Operating mode
 
 - Accept a rough invention idea plus any optional background details.
 - Ask as few follow-up questions as possible.
@@ -16,6 +16,8 @@ Treat the task as structured disclosure drafting, not generic brainstorming. The
 - Write in formal Chinese suitable for disclosure drafting.
 - Do not mention internal reasoning, hidden roles, or system workflow in the output.
 - Do not perform external patent search or claim legal certainty in the first version.
+- Keep the draft compact but concrete. Avoid repetitive filler, and do not restate the same invention summary in every section.
+- Prefer a dense, usable first draft over a long but generic one.
 
 ## Required output
 
@@ -31,34 +33,136 @@ Always produce a complete disclosure that follows this exact section order unles
 8. 附图
 9. 其他
 
-Read [output_contract.md](references/output_contract.md) before drafting the final response.
+The heading text should match the section names above exactly. Optional numbering is allowed, but do not rename, merge, omit, or reorder sections. Do not add extra top-level sections before or after them.
+
+## Output Contract
+
+Use [output_contract.md](references/output_contract.md) as the fixed output contract. The final response must contain only the disclosure itself, with the nine required headings in the exact order above.
 
 ## Drafting workflow
 
 1. Normalize the invention idea.
    - Restate the technical object, use scenario, likely mechanism, and expected technical effect.
-   - Infer missing but necessary assumptions.
+   - Classify the invention as one of: software/system, AI/algorithm, device/structure, or mixed software-hardware.
+   - Infer missing but necessary assumptions without stopping.
 
-2. Build the background section.
+2. Lock terminology before drafting.
+   - Choose 4-6 canonical technical terms or abbreviations only.
+   - Define each term once in 名词解释.
+   - Reuse every canonical term at least once in sections 4-7.
+   - Remove synonyms. One concept should have one stable name.
+
+3. Build the background section.
    - Describe the closest plausible prior art.
    - State the main technical problem and optional secondary technical problems.
    - Explain why the problem arises from the prior art.
+   - Prefer explicit wording such as `现有技术通常采用...` and `现有技术至少存在以下技术问题...`.
+   - Keep the problem technical rather than commercial.
 
-3. Draft the purpose section.
+4. Draft the purpose section.
    - Link the technical problem, technical means, and technical effect in one compact section.
+   - Prefer explicit wording such as `本发明的目的在于...` or `本实用新型的目的在于...`.
 
-4. Draft the technical solution and embodiments.
-   - Describe the core solution.
-   - Provide at least two embodiments or meaningful variants by default.
+5. Draft the technical solution and embodiments.
+   - Describe the core solution with concrete structure, relationships, workflow, and control logic.
+   - Use explicit subheadings `实施例一` and `实施例二` by default. Add more embodiments only when they add technical value.
    - Include module relationships, execution flow, working principle, and alternatives as applicable.
+   - Make this the longest section of the disclosure.
+   - For sparse user input, add technically reasonable defaults in the embodiments instead of apologizing for missing data.
 
-5. Extract protectable technical points.
+6. Extract protectable technical points.
    - Rank them from most important to least important.
    - For each point, explain the benefit relative to the prior art.
+   - Always provide at least 3 numbered points.
+   - Prefer the pattern `技术特征 + 作用机制 + 有益效果`.
 
-6. Add drawing suggestions and other supporting references.
-   - Provide useful figure suggestions even if the user did not ask for them.
-   - Add keywords, references, or retrieval hints when helpful.
+7. Add drawing suggestions and other supporting references.
+   - In the 附图 section, always suggest at least `图1` and `图2`.
+   - Use figure names that match the invention type, such as `系统架构图` / `模块关系图` / `流程图` / `时序图` / `结构示意图` / `部署图`.
+   - In the 其他 section, include concrete retrieval hints, optional standards/interfaces, or implementation notes rather than generic filler.
+
+## Section contract
+
+### 1. 初拟的发明（或实用新型）名称
+
+- Use a technically specific title.
+- Avoid vague names such as `一种智能方法` when the mechanism can be stated more precisely.
+
+### 2. 名词解释
+
+- Define 4-6 important technical terms or abbreviations only.
+- Use one canonical term per concept and remove synonyms.
+- Format each entry as `术语：定义` on its own line.
+- Do not place numbered prefixes, bullets, or parentheses before the term itself.
+- Write each term so it can be reused verbatim in later sections.
+- Do not define terms that never appear later.
+
+### 3. 所属技术领域
+
+- State the direct technical field and, when useful, the application scenario.
+- Keep it concise.
+
+### 4. 背景技术
+
+- Describe the closest plausible baseline system, structure, or workflow.
+- Explicitly state the main technical problem and, when helpful, one or two secondary technical problems.
+- Explain the cause of each problem, not just the consequence.
+- Frame the problem technically rather than commercially.
+- Do not compress this into a single short sentence. Make the prior-art -> defect -> cause chain explicit.
+
+### 5. 发明创造的目的
+
+- Explicitly connect `待解决的技术问题 -> 采用的技术手段 -> 达到的技术效果`.
+- Keep it compact, but ensure the purpose is clearly traceable to the background problems.
+- Do not write only a slogan such as `提高效率`.
+
+### 6. 发明创造的技术方案以及具体实施例
+
+Unless the user explicitly asks for a different structure, organize this section in the following order:
+
+1. 总体技术方案或总体结构
+2. 关键组成部分/功能模块/部件关系
+3. 数据流、信号流、连接关系或装配关系
+4. 工作原理、控制逻辑或执行流程
+5. 实施例一
+6. 实施例二
+7. 可替代方案或可选变体
+
+Apply the right technical vocabulary for the invention type:
+
+- software/system: modules, interfaces, data, control flow, orchestration, deployment, scoring logic
+- AI/algorithm: feature pipeline, model input/output, training or inference flow, feedback logic, routing strategy
+- device/structure: components, connection relationships, positional relationships, assembly steps, locking or limiting mechanism, force/signal transmission path
+- mixed system: explain both physical structure and software coordination where relevant
+
+To keep the disclosure technically concrete, section 6 should naturally use several technical nouns that fit the invention, such as `模块` `单元` `装置` `步骤` `流程` `控制` `数据` `接口` `策略` `逻辑` `部署` `训练` `推理` `评分`. Use only the ones that genuinely match the invention type.
+For device/structure inventions, do not stop at listing parts. Explicitly add a short paragraph for `装配步骤` or `安装流程`, and another paragraph for `锁定控制逻辑` or `受力传递逻辑`, so the mechanism is described in action rather than as a static parts list.
+
+### 7. 发明人认为要保护的发明内容的技术要点以及相应的有益效果
+
+- Use an ASCII numbered list from highest importance to lowest importance, such as `1.` `2.` `3.`.
+- Provide at least 3 technical points by default.
+- Each point should include both the protectable feature and the corresponding beneficial effect relative to prior art.
+- Keep the points concrete enough to support later claim drafting.
+- Prefer wording such as `通过...，从而...，其有益效果在于...`.
+
+### 8. 附图
+
+- Always provide at least 2 figure suggestions.
+- Prefer wording such as `图1为...` and `图2为...`.
+- Use exact figure names that are technically meaningful for the invention type.
+
+### 9. 其他
+
+- Provide at least 3 concrete items, such as retrieval keywords, candidate IPC/CPC directions, optional standards or interfaces, engineering assumptions, or future narrowing directions.
+- Do not leave this section as a single vague sentence.
+
+## Response budget
+
+- Prefer a compact first draft that is roughly 1800-2600 Chinese characters when the user does not request extra depth.
+- Spend most of the length budget on sections 4-7, especially section 6.
+- Keep sections 1-3 concise.
+- Do not pad the output with repeated benefits, repeated module lists, or repeated restatements of the invention idea.
 
 ## Hard rules
 
@@ -66,13 +170,19 @@ Always follow these rules:
 
 - Write the main problem as a technical problem, not a business goal or aesthetic goal.
 - Keep the title technically specific; avoid vague names when a more precise one is possible.
-- Define important terms and abbreviations.
+- Define only important terms and abbreviations that will be reused later.
+- In 名词解释, write entries as `术语：定义` and do not prefix the term with numbering or bullets.
 - Keep the same technical object under the same name throughout the disclosure.
 - Describe mechanism, structure, process, or control logic rather than only the desired result.
-- Provide at least two embodiments or variants unless the user explicitly asks for one.
-- Rank protectable technical points by importance.
+- Provide at least two embodiments or variants unless the user explicitly asks for one, and label them as `实施例一` and `实施例二` by default.
+- Rank protectable technical points by importance, provide at least 3 points by default, and format them as `1.` `2.` `3.`.
 - Derive beneficial effects from the technical solution, not from marketing language.
 - Include the 附图 section and the 其他 section; do not omit them.
+- In the 附图 section, include at least two concrete figure suggestions and use `图1` / `图2` wording by default.
+- In the 背景技术 and 发明创造的目的 sections, make the problem-purpose linkage explicit.
+- Ensure every term defined in 名词解释 is reused later; if a term cannot be reused, remove it from 名词解释.
+- Even for device/structure inventions, explain assembly steps, installation flow, locking control logic, or force transmission logic where applicable rather than listing parts only.
+- Do not add prefaces, conclusions, filing advice, or review disclaimers outside the nine sections.
 - If the idea is sparse, continue with explicit technical assumptions instead of stopping.
 
 ## Adapting the template to software, AI, and system inventions
@@ -93,11 +203,14 @@ Read [template_mapping.md](references/template_mapping.md) when the invention is
 Before finalizing, verify that the disclosure:
 
 - includes all nine required sections;
+- uses the exact section headings listed in `Required output`;
 - contains background technology, a technical problem, an invention purpose, and a concrete technical solution;
-- contains at least two embodiments or variants;
-- includes protectable technical points with corresponding benefits;
-- includes figure suggestions;
-- uses consistent terminology;
+- contains `实施例一` and `实施例二` unless the user explicitly requested otherwise;
+- includes at least 3 ranked protectable technical points with corresponding benefits;
+- includes at least 2 concrete figure suggestions, preferably `图1` and `图2`;
+- uses only 4-6 canonical terms in 名词解释 and reuses them consistently later;
+- keeps the 其他 section substantive rather than perfunctory;
+- avoids unnecessary repetition and still keeps sections 4-7 technically concrete;
 - reads like a formal disclosure rather than a casual explanation.
 
 ## Examples
