@@ -5,24 +5,20 @@ description: generate a complete chinese patent disclosure from a rough inventio
 
 # Patent Disclosure Drafter
 
-Treat the task as structured disclosure drafting, not generic brainstorming. Turn a rough technical idea into a complete Chinese patent disclosure that another patent professional can directly refine.
+把任务当作“粗糙创新点 -> 可直接继续精修的中文专利交底书草案”，不是泛泛 brainstorming。目标是产出一份章节完整、术语稳定、技术机制具体、可供专利代理人继续加工的正式交底书。
 
 ## Operating mode
 
-- Accept a rough invention idea plus any optional background details.
-- Ask as few follow-up questions as possible.
-- If details are missing, make technically plausible assumptions and continue drafting.
-- Keep terminology stable across all sections.
-- Write in formal Chinese suitable for disclosure drafting.
-- Do not mention internal reasoning, hidden roles, or system workflow in the output.
-- Do not perform external patent search or claim legal certainty in the first version.
-- Keep the draft compact but concrete. Avoid repetitive filler, and do not restate the same invention summary in every section.
-- Prefer a dense, usable first draft, but do not underwrite key sections. When detail is sparse, expand technical mechanism, module relationships, control logic, parameter choices, and embodiment differences instead of staying short.
-- By default, generate renderable diagrams in the 附图 section instead of stopping at textual figure suggestions.
+- 接收粗糙创新点和可选背景信息，默认少问问题。
+- 如果信息不足，直接做技术上合理且显式的补全，不要停在“信息不足”。
+- 全文使用正式中文，术语保持一致，不暴露内部推理、角色分工或系统流程。
+- 默认不做外部检索，不声称新颖性、可专利性、授权概率或自由实施保证。
+- 优先输出可用初稿，不写空泛套话，不在各章节重复同一段发明摘要。
+- 默认在 `附图` 章节给出可渲染 Mermaid 图，而不是只给文字建议。
 
 ## Required output
 
-Always produce a complete disclosure that follows this exact section order unless the user explicitly asks for a different format:
+除非用户明确要求改格式，否则最终输出必须只包含以下九个一级章节，且顺序完全一致：
 
 1. 初拟的发明（或实用新型）名称
 2. 名词解释
@@ -34,224 +30,176 @@ Always produce a complete disclosure that follows this exact section order unles
 8. 附图
 9. 其他
 
-The heading text should match the section names above exactly. Optional numbering is allowed, but do not rename, merge, omit, or reorder sections. Do not add extra top-level sections before or after them.
+章节标题必须与上面完全一致。可以带编号，但不得改名、合并、缺失、调序，也不要在九个章节前后增加额外一级标题。
 
 ## Output Contract
 
-Use [output_contract.md](references/output_contract.md) as the fixed output contract. The final response must contain only the disclosure itself, with the nine required headings in the exact order above.
-Read [figure_generation.md](references/figure_generation.md) before drafting the 附图 section.
+使用 [output_contract.md](references/output_contract.md) 作为固定交付契约。
+
+- 最终回复只能是交底书正文本身。
+- 写 `附图` 之前先读 [figure_generation.md](references/figure_generation.md)。
+- 如果发明属于软件、AI、算法或多智能体，再读 [template_mapping.md](references/template_mapping.md)。
+- 需要风格锚点时读取 [examples.md](references/examples.md)。
 
 ## Drafting workflow
 
-1. Normalize the invention idea.
-   - Restate the technical object, use scenario, likely mechanism, and expected technical effect.
-   - Classify the invention as one of: software/system, AI/algorithm, device/structure, or mixed software-hardware.
-   - Infer missing but necessary assumptions without stopping.
+1. 归一化创新点。
+   - 先明确技术对象、应用场景、核心机制、预期技术效果。
+   - 将发明归类为：软件/系统、AI/算法、装置/结构、软硬结合。
+   - 推断缺失但必要的工程假设，不要停下来追问。
 
-2. Lock terminology before drafting.
-   - Choose 4-6 canonical technical terms or abbreviations only.
-   - Define each term once in 名词解释.
-   - Reuse every canonical term at least once in sections 4-7.
-   - Remove synonyms. One concept should have one stable name.
+2. 锁定术语。
+   - 在 `名词解释` 中只定义 4-6 个核心术语或缩写。
+   - 每个概念只保留一个叫法，不要同义词漂移。
+   - 每个术语都必须在第 4-7 节至少再次出现一次；不能复用的术语不要定义。
+   - `名词解释` 每行格式固定为 `术语：定义`，术语前不要加项目符号或编号。
 
-3. Build the background section.
-   - Describe the closest plausible prior art.
-   - State the main technical problem and optional secondary technical problems.
-   - Explain why the problem arises from the prior art.
-   - Prefer explicit wording such as `现有技术通常采用...` and `现有技术至少存在以下技术问题...`.
-   - Keep the problem technical rather than commercial.
+3. 先规划长度和附图，再开始写正文。
+   - 第 6 节正文不少于 2000 个中文字符。
+   - 全文正文不少于 4000 个中文字符。
+   - 默认准备 `图1` 和 `图2`，仅在确有帮助时再加 `图3`。
+   - 不把长度浪费在重复摘要上，把篇幅投给背景缺陷、技术机制、实施例差异和保护要点。
 
-4. Draft the purpose section.
-   - Link the technical problem, technical means, and technical effect in one compact section.
-   - Prefer explicit wording such as `本发明的目的在于...` or `本实用新型的目的在于...`.
+4. 按章节写作，并使用以下硬锚点。
+   - `背景技术`：优先出现 `现有技术通常采用...` 和 `现有技术至少存在以下技术问题...`，把“现有方案 -> 缺陷 -> 成因”写完整，技术问题不能写成商业目标。
+   - `发明创造的目的`：优先出现 `本发明的目的在于...` 或 `本实用新型的目的在于...`，明确闭环 `待解决的技术问题 -> 采用的技术手段 -> 达到的技术效果`。
+   - `发明创造的技术方案以及具体实施例`：必须写成全文最长章节，默认包含 `总体技术方案或总体结构`、`关键组成部分/功能模块/部件关系`、`数据流/信号流/连接关系或装配关系`、`工作原理/控制逻辑或执行流程`、`实施例一`、`实施例二`、`可替代方案或可选变体`。
+   - `发明人认为要保护的发明内容的技术要点以及相应的有益效果`：至少 3 个 `1.` `2.` `3.` 编号点，每点优先使用 `通过...，从而...，其有益效果在于...`。
+   - `附图`：每个图先写一句 `图1为...` / `图2为...`，下一行紧跟 Mermaid 代码块。
+   - `其他`：至少给出 3 个具体项目，可写检索关键词、候选 IPC/CPC 方向、接口/标准、工程假设、可进一步收窄的方向。
 
-5. Draft the technical solution and embodiments.
-   - Describe the core solution with concrete structure, relationships, workflow, and control logic.
-   - Use explicit subheadings `实施例一` and `实施例二` by default. Add more embodiments only when they add technical value.
-   - Include module relationships, execution flow, working principle, and alternatives as applicable.
-   - Make this the longest section of the disclosure.
-   - Expand this section until the prose of section 6 is no less than 2000 Chinese characters.
-   - For sparse user input, add technically reasonable defaults in the embodiments instead of apologizing for missing data.
-
-6. Extract protectable technical points.
-   - Rank them from most important to least important.
-   - For each point, explain the benefit relative to the prior art.
-   - Always provide at least 3 numbered points.
-   - Prefer the pattern `技术特征 + 作用机制 + 有益效果`.
-
-7. Plan and generate figures.
-   - Decide the figure set before writing section 8. By default, prepare at least `图1` and `图2`, and add `图3` only when it materially improves clarity.
-   - Map invention type to figure types, such as `系统架构图` / `模块关系图` / `流程图` / `时序图` / `结构示意图` / `装配流程图` / `受力或控制关系图`.
-   - Reuse the canonical terminology from 名词解释 and section 6 inside figure labels.
-   - Generate renderable Mermaid code blocks directly in section 8 unless the user explicitly asks for text-only figure descriptions.
-
-8. Add other supporting references.
-   - In the 其他 section, include concrete retrieval hints, optional standards/interfaces, or implementation notes rather than generic filler.
-
-## Section contract
+## Section-specific guidance
 
 ### 1. 初拟的发明（或实用新型）名称
 
-- Use a technically specific title.
-- Avoid vague names such as `一种智能方法` when the mechanism can be stated more precisely.
+- 标题要技术上具体。
+- 当核心机制可以说明时，不要写成 `一种智能方法` 这类空标题。
 
 ### 2. 名词解释
 
-- Define 4-6 important technical terms or abbreviations only.
-- Use one canonical term per concept and remove synonyms.
-- Format each entry as `术语：定义` on its own line.
-- Do not place numbered prefixes, bullets, or parentheses before the term itself.
-- Write each term so it can be reused verbatim in later sections.
-- Do not define terms that never appear later.
+- 只定义后文会重复使用的 4-6 个术语。
+- 优先定义系统名、核心模块名、关键数据对象、关键结构件或关键控制单元。
+- 不要定义“本发明”“系统”“方法”这类泛词，除非它们确实是稳定专有称呼。
 
 ### 3. 所属技术领域
 
-- State the direct technical field and, when useful, the application scenario.
-- Keep it concise.
+- 用一句到两句交代直接技术领域和必要的应用场景。
+- 保持简洁，不抢第 4-7 节篇幅。
 
 ### 4. 背景技术
 
-- Describe the closest plausible baseline system, structure, or workflow.
-- Explicitly state the main technical problem and, when helpful, one or two secondary technical problems.
-- Explain the cause of each problem, not just the consequence.
-- Frame the problem technically rather than commercially.
-- Do not compress this into a single short sentence. Make the prior-art -> defect -> cause chain explicit.
+- 描述最接近的现有系统、结构或流程，不要只说“现有写作效率低”。
+- 明确至少 1 个主技术问题，必要时补 1-2 个次技术问题。
+- 不只写后果，还要解释成因，例如术语漂移、模块耦合、锁定不稳、反馈链过长、部署链路复杂、误报抑制不足等。
 
 ### 5. 发明创造的目的
 
-- Explicitly connect `待解决的技术问题 -> 采用的技术手段 -> 达到的技术效果`.
-- Keep it compact, but ensure the purpose is clearly traceable to the background problems.
-- Do not write only a slogan such as `提高效率`.
+- 用一个紧凑段落把问题、方案和效果串起来。
+- 不能只写 `提高效率`、`提升体验` 这类口号。
 
 ### 6. 发明创造的技术方案以及具体实施例
 
-Unless the user explicitly asks for a different structure, organize this section in the following order:
+这一节必须具体、连续、可展开，不要变成模块清单。优先写机制、关系、流程、控制条件、参数选择、异常处理、变体差异。
 
-1. 总体技术方案或总体结构
-2. 关键组成部分/功能模块/部件关系
-3. 数据流、信号流、连接关系或装配关系
-4. 工作原理、控制逻辑或执行流程
-5. 实施例一
-6. 实施例二
-7. 可替代方案或可选变体
+按发明类型补充以下内容：
 
-Apply the right technical vocabulary for the invention type:
+- 软件/系统：写模块、接口、数据流、控制流、部署关系、评分或路由逻辑。
+- AI/算法：写特征处理、模型输入输出、训练或推理流程、反馈机制、更新策略。
+- 装置/结构：写部件、连接关系、位置关系、装配步骤、装配流程、锁定控制逻辑、受力或信号传递路径；必要时将核心部件概括为 `支撑单元`、`锁定单元`、`限位单元` 等功能单元或装置。
+- 软硬结合：同时写物理结构和软件协同，不要只写其中一侧。
 
-- software/system: modules, interfaces, data, control flow, orchestration, deployment, scoring logic
-- AI/algorithm: feature pipeline, model input/output, training or inference flow, feedback logic, routing strategy
-- device/structure: components, connection relationships, positional relationships, assembly steps, locking or limiting mechanism, force/signal transmission path
-- mixed system: explain both physical structure and software coordination where relevant
+为了稳定命中技术具体性，第 4-7 节自然复用与发明匹配的技术名词，例如 `模块` `单元` `装置` `步骤` `流程` `控制` `数据` `接口` `策略` `逻辑` `部署` `训练` `推理` `评分`。只使用真正匹配该发明的词，但不要过少。
 
-To keep the disclosure technically concrete, section 6 should naturally use several technical nouns that fit the invention, such as `模块` `单元` `装置` `步骤` `流程` `控制` `数据` `接口` `策略` `逻辑` `部署` `训练` `推理` `评分`. Use only the ones that genuinely match the invention type.
-For device/structure inventions, do not stop at listing parts. Explicitly add a short paragraph for `装配步骤` or `安装流程`, and another paragraph for `锁定控制逻辑` or `受力传递逻辑`, so the mechanism is described in action rather than as a static parts list.
+当用户输入稀疏时，优先补充以下信息来拉高可用性，而不是道歉：
+
+- 关键模块或部件之间的连接关系
+- 输入、输出、触发条件和状态切换
+- 控制阈值、评分因子、优先级或锁定条件
+- 实施例之间的差异点
+- 可替代材料、算法、连接方式或部署方式
+- 故障处理、回退策略、误报抑制或稳定性增强机制
+
+对于装置/结构类发明，至少额外补出以下三类文字：
+
+- 一段把主要部件抽象为若干 `单元` 或 `装置` 的功能关系描述
+- 一句把整体结构自然概括为某种 `支撑装置`、`锁定装置`、`安装装置` 或等效功能装置的表述
+- 一段明确写出 `装配步骤` 或 `安装流程`
+- 一段明确写出 `锁定控制逻辑`、`限位控制逻辑` 或 `受力传递逻辑`
 
 ### 7. 发明人认为要保护的发明内容的技术要点以及相应的有益效果
 
-- Use an ASCII numbered list from highest importance to lowest importance, such as `1.` `2.` `3.`.
-- Provide at least 3 technical points by default.
-- Each point should include both the protectable feature and the corresponding beneficial effect relative to prior art.
-- Keep the points concrete enough to support later claim drafting.
-- Prefer wording such as `通过...，从而...，其有益效果在于...`.
+- 至少 3 个按重要性递减排列的编号点。
+- 每个点都同时写“技术特征 + 作用机制 + 相对现有技术的有益效果”。
+- 粒度要足够支持后续权利要求抽取，不要只写概括口号。
 
 ### 8. 附图
 
-- Always provide at least 2 figures.
-- Each figure must contain:
-  - one sentence such as `图1为...` or `图2为...`;
-  - one Mermaid code block immediately after the sentence.
-- Prefer one figure for overall structure and one figure for process/control/assembly logic.
-- Use exact figure names that are technically meaningful for the invention type.
-- Keep figure labels aligned with the canonical terms already defined in 名词解释.
-- Use Mermaid that can render in standard markdown viewers. Prefer `flowchart TB/LR`, `sequenceDiagram`, or `stateDiagram-v2`.
-- For device/structure inventions, use Mermaid to draw a functional schematic of component relationships, assembly sequence, locking path, or force transmission path. Do not pretend it is a dimensioned CAD drawing.
-- If the platform obviously cannot render Mermaid or the user explicitly forbids code blocks, fall back to textual figure descriptions only, but default behavior is to output Mermaid.
+- 默认至少 2 图，每图都要有一句图名说明和一个 Mermaid 代码块。
+- Mermaid 使用标准 markdown 可渲染语法，优先 `flowchart LR`、`flowchart TB`、`sequenceDiagram`、`stateDiagram-v2`。
+- 节点 ID 用 ASCII，例如 `A1`、`M2`、`S3`；标签用引号包住，例如 `A1["协调节点"]`。
+- 图中标签复用 `名词解释` 中锁定的术语，避免新发明出另一套叫法。
+
+图名优先包含 evaluator 容易识别的关键词：
+
+- 软件/系统：`系统架构图`、`模块关系图`、`流程图`、`时序图`
+- AI/算法：`系统架构图`、`流程图`、`时序图`
+- 装置/结构：`结构示意图`、`装配流程图`、`锁定控制流程图`
+
+默认图集建议：
+
+- 软件/系统：`图1为...系统架构图。` `图2为...核心流程图。`
+- AI/算法：`图1为...系统架构图。` `图2为...更新或推理流程图。`
+- 装置/结构：`图1为...结构示意图。` `图2为...装配或锁定流程图。`
+
+如果平台显然不能渲染 Mermaid，或用户明确要求纯文字附图，才退化为文字说明；默认不退化。
 
 ### 9. 其他
 
-- Provide at least 3 concrete items, such as retrieval keywords, candidate IPC/CPC directions, optional standards or interfaces, engineering assumptions, or future narrowing directions.
-- Do not leave this section as a single vague sentence.
+- 保持实质性，不能只写一句空话。
+- 默认写 3 个以上具体项目，优先选择后续检索或补充撰写真正能用到的线索。
 
-## Length floor
+## Length strategy
 
-- The prose of section 6 `发明创造的技术方案以及具体实施例` must be no less than 2000 Chinese characters.
-- The full disclosure prose must be no less than 4000 Chinese characters.
-- Headings and Mermaid code blocks do not count toward the prose floor.
-- If the draft is still short, expand sections 4, 6, 7, and 9 with additional technical detail rather than adding filler.
-- Prefer expanding with mechanism, workflow, control conditions, signal/data paths, assembly constraints, variant differences, operating thresholds, and failure handling.
-
-## Response budget
-
-- Target total prose of roughly 4000-5500 Chinese characters when the user does not request a different depth.
-- Mermaid figure code is additional to the prose budget.
-- Spend most of the prose length budget on sections 4-7, especially section 6.
-- Keep sections 1-3 concise relative to sections 4-7, but do not let them become skeletal.
-- Do not pad the output with repeated benefits, repeated module lists, or repeated restatements of the invention idea.
+- 第 1-3 节保持简洁。
+- 第 4 节写清现有技术和问题成因，不要压成一两句。
+- 第 6 节通常占全文最大篇幅，建议 2200-3000 中文字符。
+- 在用户未要求更长篇幅时，全文正文通常控制在 4000-5500 中文字符，达到底线后不要继续用重复内容硬拉长度。
+- 第 7 节和第 9 节如果偏短，优先补充机制和限制条件，不要堆空泛优点。
+- 标题和 Mermaid 代码块不计入长度底线。
 
 ## Hard rules
 
-Always follow these rules:
+始终遵守以下规则：
 
-- Write the main problem as a technical problem, not a business goal or aesthetic goal.
-- Keep the title technically specific; avoid vague names when a more precise one is possible.
-- Define only important terms and abbreviations that will be reused later.
-- In 名词解释, write entries as `术语：定义` and do not prefix the term with numbering or bullets.
-- Keep the same technical object under the same name throughout the disclosure.
-- Describe mechanism, structure, process, or control logic rather than only the desired result.
-- Provide at least two embodiments or variants unless the user explicitly asks for one, and label them as `实施例一` and `实施例二` by default.
-- Rank protectable technical points by importance, provide at least 3 points by default, and format them as `1.` `2.` `3.`.
-- Derive beneficial effects from the technical solution, not from marketing language.
-- Include the 附图 section and the 其他 section; do not omit them.
-- In the 附图 section, include at least two concrete figures, use `图1` / `图2` wording by default, and attach Mermaid code blocks unless the user explicitly requests text-only output.
-- Ensure the prose of section 6 reaches at least 2000 Chinese characters, excluding the section heading.
-- Ensure the full disclosure prose reaches at least 4000 Chinese characters, excluding headings and Mermaid code blocks.
-- In the 背景技术 and 发明创造的目的 sections, make the problem-purpose linkage explicit.
-- Ensure every term defined in 名词解释 is reused later; if a term cannot be reused, remove it from 名词解释.
-- Even for device/structure inventions, explain assembly steps, installation flow, locking control logic, or force transmission logic where applicable rather than listing parts only.
-- Do not add prefaces, conclusions, filing advice, or review disclaimers outside the nine sections.
-- If the idea is sparse, continue with explicit technical assumptions instead of stopping.
-
-## Adapting the template to software, AI, and system inventions
-
-If the invention is not a purely physical structure, reinterpret structural template requirements in a technically meaningful way:
-
-- “组成部分” → modules, subsystems, data objects, or service units
-- “连接关系” → dependencies, message flow, API calls, orchestration links, or data flow
-- “位置关系” → deployment placement, logical hierarchy, storage location, or ownership hierarchy
-- “工作原理” → decision logic, algorithmic mechanism, scoring logic, or coordination logic
-- “工作过程” → execution pipeline, state transition, or control flow
-- “可替代的地方” → alternative models, optional modules, routing strategies, or deployment variants
-
-Read [template_mapping.md](references/template_mapping.md) when the invention is software, AI, algorithmic, or multi-agent.
+- 只输出九个固定章节，不要加前言、结语、申请建议或审阅免责声明。
+- `名词解释` 只保留 4-6 个会复用的术语，并保证后文复用。
+- 技术问题必须是技术问题，不是商业目标或审美目标。
+- 默认给出 `实施例一` 和 `实施例二`，除非用户明确要求只保留一个实施例。
+- 第 7 节至少 3 个编号技术要点，并写出相应有益效果。
+- 第 8 节至少 2 张图，默认附 Mermaid，且图名尽量包含 `图1` `图2` `系统架构图` `模块关系图` `流程图` `时序图` `结构示意图` 这类明确词。
+- 第 6 节正文不少于 2000 中文字符，全文正文不少于 4000 中文字符。
+- 即使是结构类发明，也要写装配步骤、锁定逻辑或受力传递逻辑，不能只列零件。
+- 当信息缺失时继续显式补全，不要停在“需进一步确认”。
 
 ## Output quality checks
 
-Before finalizing, verify that the disclosure:
+定稿前自检：
 
-- includes all nine required sections;
-- uses the exact section headings listed in `Required output`;
-- contains background technology, a technical problem, an invention purpose, and a concrete technical solution;
-- contains `实施例一` and `实施例二` unless the user explicitly requested otherwise;
-- includes at least 3 ranked protectable technical points with corresponding benefits;
-- includes at least 2 concrete figures, preferably `图1` and `图2`, with Mermaid code blocks that match the written disclosure unless the user explicitly requested text-only figures;
-- keeps the prose of section 6 at or above 2000 Chinese characters;
-- keeps the full disclosure prose at or above 4000 Chinese characters;
-- uses only 4-6 canonical terms in 名词解释 and reuses them consistently later;
-- keeps the 其他 section substantive rather than perfunctory;
-- avoids unnecessary repetition and still keeps sections 4-7 technically concrete;
-- keeps Mermaid labels concise, syntactically safe, and consistent with section 6;
-- reads like a formal disclosure rather than a casual explanation.
-
-## Examples
-
-Use [examples.md](references/examples.md) as a style anchor when the task is similar to software/AI inventions or device/structure inventions.
+- 九个章节是否齐全且顺序正确。
+- `背景技术 -> 发明创造的目的 -> 技术方案 -> 有益效果` 是否形成闭环。
+- `名词解释` 中每个术语是否在第 4-7 节再次出现。
+- 第 6 节是否确实写出了结构关系、流程关系、控制逻辑或装配关系，而非空泛结果。
+- 是否存在 `实施例一`、`实施例二`、至少 3 个编号技术要点、至少 2 张附图。
+- `其他` 是否仍然有实质内容。
+- 全文是否像正式交底书，而不是解释性回答或咨询建议。
 
 ## Refusal boundary
 
-Do not claim:
+不要声称：
 
-- guaranteed novelty,
-- guaranteed patentability,
-- guaranteed grantability,
-- guaranteed freedom to operate.
+- guaranteed novelty
+- guaranteed patentability
+- guaranteed grantability
+- guaranteed freedom to operate
 
-Present the result as a structured disclosure draft that should be reviewed by patent counsel or a patent professional before filing.
+结果应被表述为“可供专利专业人士继续审查和加工的交底书草案”。
