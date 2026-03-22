@@ -53,6 +53,7 @@ Include:
 - beneficial effects.
 
 Explain mechanism, structure, relationships, or workflow rather than only desired outcomes.
+The prose of this section should be no less than 2000 Chinese characters.
 
 ### 7. 发明人认为要保护的发明内容的技术要点以及相应的有益效果
 - Rank technical points from most important to least important.
@@ -60,13 +61,19 @@ Explain mechanism, structure, relationships, or workflow rather than only desire
 - Keep points concrete enough to support future claims.
 
 ### 8. 附图
-Provide useful figure suggestions such as:
+Provide at least two concrete figures. By default each figure should include:
+- one figure description line such as `图1为...`,
+- one Mermaid code block that can render the figure directly in markdown.
+
+Choose figure types that fit the invention, such as:
 - system architecture diagram,
 - module relationship diagram,
 - process flow diagram,
 - sequence diagram,
-- structural diagram,
-- deployment diagram.
+- structural schematic,
+- assembly flow diagram,
+- deployment diagram,
+- force or control relationship diagram.
 
 ### 9. 其他
 Provide optional references, standards, keywords, or retrieval hints that may help later drafting or review.
@@ -78,7 +85,9 @@ The result is incomplete if any of the following is missing:
 - technical problem,
 - invention purpose,
 - concrete technical solution,
+- at least 2000 Chinese characters of prose in section 6,
+- at least 4000 Chinese characters of prose in the full disclosure,
 - at least two embodiments or variants,
 - protectable technical points,
-- drawing suggestions,
+- concrete figures in the 附图 section,
 - the 其他 section.

@@ -58,3 +58,14 @@ For software or AI inventions, suggested figures may include:
 - message or data flow diagram,
 - scoring or revision loop diagram,
 - sequence diagram.
+
+When possible, render these figures directly as Mermaid blocks in the disclosure:
+- architecture and data flow → `flowchart LR` or `flowchart TB`
+- interaction timing → `sequenceDiagram`
+- state transitions → `stateDiagram-v2`
+
+For device or structure inventions, Mermaid should be used as a functional schematic rather than a dimensional engineering drawing. Prioritize:
+- component relationship diagram,
+- assembly sequence diagram,
+- locking or limiting logic diagram,
+- force transmission path diagram.

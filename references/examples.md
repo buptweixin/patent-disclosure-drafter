@@ -14,7 +14,7 @@ Use these examples as style anchors for completeness and technical specificity.
 - The technical solution describes modules, data flow, and drafting stages.
 - At least two embodiments are provided.
 - Protectable points are ranked and linked to advantages.
-- 附图 suggests architecture, flow, and sequence diagrams.
+- 附图 not only names architecture, flow, or sequence diagrams, but also includes renderable Mermaid code blocks.
 
 ### Weak output characteristics
 - The background says only “patent writing is difficult”.
@@ -33,4 +33,4 @@ Use these examples as style anchors for completeness and technical specificity.
 - The solution explains components, connection relationships, assembly flow, and locking mechanism.
 - At least two embodiments are provided, such as buckle-based locking and screw-assisted locking.
 - Protectable points are concrete and ordered by importance.
-- 附图 suggests assembly view, exploded view, and sectional view.
+- 附图 includes functional schematics for component relationships, assembly sequence, and locking or force transmission path, preferably as Mermaid blocks.

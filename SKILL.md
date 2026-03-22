@@ -1,6 +1,6 @@
 ---
 name: patent-disclosure-drafter
-description: generate a complete chinese patent disclosure from a rough invention idea and optional background details. use when the user wants ai to expand a technical concept into a formal patent disclosure that strictly follows a disclosure template, including title, definitions, technical field, background technology, invention purpose, technical solution, embodiments, protectable technical points, drawings, and other supporting sections. prioritize completeness, consistent terminology, and formal disclosure style. use even when the user provides only a rough idea; make reasonable technical assumptions instead of repeatedly asking follow-up questions. do not rely on external search in the first version.
+description: generate a complete chinese patent disclosure from a rough invention idea and optional background details. use when the user wants ai to expand a technical concept into a formal patent disclosure that strictly follows a disclosure template, including title, definitions, technical field, background technology, invention purpose, technical solution, embodiments, protectable technical points, drawings, and other supporting sections. prioritize completeness, consistent terminology, formal disclosure style, and renderable figures in the drawings section. use even when the user provides only a rough idea; make reasonable technical assumptions instead of repeatedly asking follow-up questions. do not rely on external search in the first version.
 ---
 
 # Patent Disclosure Drafter
@@ -17,7 +17,8 @@ Treat the task as structured disclosure drafting, not generic brainstorming. Tur
 - Do not mention internal reasoning, hidden roles, or system workflow in the output.
 - Do not perform external patent search or claim legal certainty in the first version.
 - Keep the draft compact but concrete. Avoid repetitive filler, and do not restate the same invention summary in every section.
-- Prefer a dense, usable first draft over a long but generic one.
+- Prefer a dense, usable first draft, but do not underwrite key sections. When detail is sparse, expand technical mechanism, module relationships, control logic, parameter choices, and embodiment differences instead of staying short.
+- By default, generate renderable diagrams in the 附图 section instead of stopping at textual figure suggestions.
 
 ## Required output
 
@@ -38,6 +39,7 @@ The heading text should match the section names above exactly. Optional numberin
 ## Output Contract
 
 Use [output_contract.md](references/output_contract.md) as the fixed output contract. The final response must contain only the disclosure itself, with the nine required headings in the exact order above.
+Read [figure_generation.md](references/figure_generation.md) before drafting the 附图 section.
 
 ## Drafting workflow
 
@@ -68,6 +70,7 @@ Use [output_contract.md](references/output_contract.md) as the fixed output cont
    - Use explicit subheadings `实施例一` and `实施例二` by default. Add more embodiments only when they add technical value.
    - Include module relationships, execution flow, working principle, and alternatives as applicable.
    - Make this the longest section of the disclosure.
+   - Expand this section until the prose of section 6 is no less than 2000 Chinese characters.
    - For sparse user input, add technically reasonable defaults in the embodiments instead of apologizing for missing data.
 
 6. Extract protectable technical points.
@@ -76,9 +79,13 @@ Use [output_contract.md](references/output_contract.md) as the fixed output cont
    - Always provide at least 3 numbered points.
    - Prefer the pattern `技术特征 + 作用机制 + 有益效果`.
 
-7. Add drawing suggestions and other supporting references.
-   - In the 附图 section, always suggest at least `图1` and `图2`.
-   - Use figure names that match the invention type, such as `系统架构图` / `模块关系图` / `流程图` / `时序图` / `结构示意图` / `部署图`.
+7. Plan and generate figures.
+   - Decide the figure set before writing section 8. By default, prepare at least `图1` and `图2`, and add `图3` only when it materially improves clarity.
+   - Map invention type to figure types, such as `系统架构图` / `模块关系图` / `流程图` / `时序图` / `结构示意图` / `装配流程图` / `受力或控制关系图`.
+   - Reuse the canonical terminology from 名词解释 and section 6 inside figure labels.
+   - Generate renderable Mermaid code blocks directly in section 8 unless the user explicitly asks for text-only figure descriptions.
+
+8. Add other supporting references.
    - In the 其他 section, include concrete retrieval hints, optional standards/interfaces, or implementation notes rather than generic filler.
 
 ## Section contract
@@ -148,20 +155,36 @@ For device/structure inventions, do not stop at listing parts. Explicitly add a 
 
 ### 8. 附图
 
-- Always provide at least 2 figure suggestions.
-- Prefer wording such as `图1为...` and `图2为...`.
+- Always provide at least 2 figures.
+- Each figure must contain:
+  - one sentence such as `图1为...` or `图2为...`;
+  - one Mermaid code block immediately after the sentence.
+- Prefer one figure for overall structure and one figure for process/control/assembly logic.
 - Use exact figure names that are technically meaningful for the invention type.
+- Keep figure labels aligned with the canonical terms already defined in 名词解释.
+- Use Mermaid that can render in standard markdown viewers. Prefer `flowchart TB/LR`, `sequenceDiagram`, or `stateDiagram-v2`.
+- For device/structure inventions, use Mermaid to draw a functional schematic of component relationships, assembly sequence, locking path, or force transmission path. Do not pretend it is a dimensioned CAD drawing.
+- If the platform obviously cannot render Mermaid or the user explicitly forbids code blocks, fall back to textual figure descriptions only, but default behavior is to output Mermaid.
 
 ### 9. 其他
 
 - Provide at least 3 concrete items, such as retrieval keywords, candidate IPC/CPC directions, optional standards or interfaces, engineering assumptions, or future narrowing directions.
 - Do not leave this section as a single vague sentence.
 
+## Length floor
+
+- The prose of section 6 `发明创造的技术方案以及具体实施例` must be no less than 2000 Chinese characters.
+- The full disclosure prose must be no less than 4000 Chinese characters.
+- Headings and Mermaid code blocks do not count toward the prose floor.
+- If the draft is still short, expand sections 4, 6, 7, and 9 with additional technical detail rather than adding filler.
+- Prefer expanding with mechanism, workflow, control conditions, signal/data paths, assembly constraints, variant differences, operating thresholds, and failure handling.
+
 ## Response budget
 
-- Prefer a compact first draft that is roughly 1800-2600 Chinese characters when the user does not request extra depth.
-- Spend most of the length budget on sections 4-7, especially section 6.
-- Keep sections 1-3 concise.
+- Target total prose of roughly 4000-5500 Chinese characters when the user does not request a different depth.
+- Mermaid figure code is additional to the prose budget.
+- Spend most of the prose length budget on sections 4-7, especially section 6.
+- Keep sections 1-3 concise relative to sections 4-7, but do not let them become skeletal.
 - Do not pad the output with repeated benefits, repeated module lists, or repeated restatements of the invention idea.
 
 ## Hard rules
@@ -178,7 +201,9 @@ Always follow these rules:
 - Rank protectable technical points by importance, provide at least 3 points by default, and format them as `1.` `2.` `3.`.
 - Derive beneficial effects from the technical solution, not from marketing language.
 - Include the 附图 section and the 其他 section; do not omit them.
-- In the 附图 section, include at least two concrete figure suggestions and use `图1` / `图2` wording by default.
+- In the 附图 section, include at least two concrete figures, use `图1` / `图2` wording by default, and attach Mermaid code blocks unless the user explicitly requests text-only output.
+- Ensure the prose of section 6 reaches at least 2000 Chinese characters, excluding the section heading.
+- Ensure the full disclosure prose reaches at least 4000 Chinese characters, excluding headings and Mermaid code blocks.
 - In the 背景技术 and 发明创造的目的 sections, make the problem-purpose linkage explicit.
 - Ensure every term defined in 名词解释 is reused later; if a term cannot be reused, remove it from 名词解释.
 - Even for device/structure inventions, explain assembly steps, installation flow, locking control logic, or force transmission logic where applicable rather than listing parts only.
@@ -207,10 +232,13 @@ Before finalizing, verify that the disclosure:
 - contains background technology, a technical problem, an invention purpose, and a concrete technical solution;
 - contains `实施例一` and `实施例二` unless the user explicitly requested otherwise;
 - includes at least 3 ranked protectable technical points with corresponding benefits;
-- includes at least 2 concrete figure suggestions, preferably `图1` and `图2`;
+- includes at least 2 concrete figures, preferably `图1` and `图2`, with Mermaid code blocks that match the written disclosure unless the user explicitly requested text-only figures;
+- keeps the prose of section 6 at or above 2000 Chinese characters;
+- keeps the full disclosure prose at or above 4000 Chinese characters;
 - uses only 4-6 canonical terms in 名词解释 and reuses them consistently later;
 - keeps the 其他 section substantive rather than perfunctory;
 - avoids unnecessary repetition and still keeps sections 4-7 technically concrete;
+- keeps Mermaid labels concise, syntactically safe, and consistent with section 6;
 - reads like a formal disclosure rather than a casual explanation.
 
 ## Examples
