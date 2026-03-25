@@ -1,3 +1,4 @@
 interface:
-  display_name: "Patent Disclosure Drafter"
-  short_description: "Draft a complete Chinese patent disclosure from a rough invention idea, with renderable Mermaid figures."
+  display_name: Patent Disclosure Drafter
+  short_description: Draft a complete Chinese patent disclosure from a rough invention
+    idea, with renderable Mermaid figures.

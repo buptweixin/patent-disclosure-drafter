@@ -2,35 +2,40 @@
 
 Use these examples as style anchors for completeness and technical specificity.
 
-## Example 1: software / AI invention
+## Example 1: software / VLM invention
 
 ### User input
-“做一个基于多智能体的自动专利交底书生成工具，用户只提供创新点，系统自动补全背景技术、拆解技术问题并生成完整交底书。”
+“结合大模型的三维空间量化和推理能力，让巡检机器人先全局扫描厂房，自动定位烟雾报警器、消防警铃等设备的位置和相对距离；若发现疑似遮挡或损坏，再调用局部高清放大工具复核灭火器压力表等细节。”
 
 ### Good output characteristics
 - The title is technically specific.
-- 背景技术 describes existing single-pass drafting systems or template-only systems.
-- The technical problem is framed as unstable section completeness, weak terminology consistency, or insufficient embodiment detail.
-- The technical solution describes modules, data flow, and drafting stages.
-- At least two embodiments are provided.
+- 背景技术 describes existing single-frame detection or rule-based inspection systems, and explains why they miss spatial relationships, occlusions, or fine-grained defects.
+- The technical problem is framed as weak 3D spatial reasoning, unstable device grounding, or lack of active reinspection capability.
+- The technical solution describes global scan, scene representation, spatial grounding, uncertainty scoring, and local zoom or recapture tools.
+- At least two embodiments are provided, such as depth-assisted reconstruction vs multi-view reconstruction, or wheeled robot vs drone platform.
 - Protectable points are ranked and linked to advantages.
-- 附图 not only names architecture, flow, or sequence diagrams, but also includes renderable Mermaid code blocks.
+- 附图 not only names architecture, flow, or sequence diagrams, but also includes renderable Mermaid code blocks that show the global-to-local review loop.
 
 ### Weak output characteristics
-- The background says only “patent writing is difficult”.
-- The technical problem is written as “提高工作效率” without technical mechanism.
-- The solution says only “use AI to generate patents” with no modules or workflow.
+- The background says only “工业巡检误报率高” without describing the current technical pipeline.
+- The technical problem is written as “提高效率” without linking it to spatial inference or detail verification.
+- The solution says only “use VLM to inspect” with no modules, data flow, or tool-calling logic.
 - There is only one embodiment.
 
 ## Example 2: device / structure invention
 
 ### User input
-“设计一种可快速拆装且稳定性更高的模块化支架结构。”
+“设计一种支持全局扫描和局部高清复核的巡检终端结构，要求能在工业机器人平台上稳定工作，并在广角扫描和长焦复核之间快速切换。”
 
 ### Good output characteristics
-- 背景技术 describes existing bracket structures and where looseness occurs.
-- The technical problem is mechanical or structural.
-- The solution explains components, connection relationships, assembly flow, and locking mechanism.
-- At least two embodiments are provided, such as buckle-based locking and screw-assisted locking.
+- 背景技术 describes existing single-camera or rigidly mounted inspection terminals and where field of view, vibration stability, or close-up capability become bottlenecks.
+- The technical problem is mechanical, optical, or structural.
+- The solution explains components, positional relationships, calibration or installation flow, and switching / locking mechanism between scan mode and review mode.
+- At least two embodiments are provided, such as coaxial wide-angle + zoom layout and split wide-angle + zoom layout, or mechanical lock plus electromagnetic assist.
 - Protectable points are concrete and ordered by importance.
-- 附图 includes functional schematics for component relationships, assembly sequence, and locking or force transmission path, preferably as Mermaid blocks.
+- 附图 includes functional schematics for component relationships, installation sequence, and locking or force / control transmission path, preferably as Mermaid blocks.
+
+### Weak output characteristics
+- There is only a list of parts with no connection or positional relationships.
+- There is no installation flow, calibration flow, or switching / locking logic.
+- No concrete embodiment differences are explained.
